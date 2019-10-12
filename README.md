@@ -72,9 +72,10 @@ yarn test
 ## Roadmap
 
 - [x] Create API StackOverflow service
-- [x] Create API User resources
+- [x] Create API User listing
 - [x] Create API initial tests
 - [ ] Add Client part of the project
+- [ ] Add Client initial tests
 
 ## License
 
