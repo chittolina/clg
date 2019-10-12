@@ -10,8 +10,16 @@ loader(app)
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT)
+const server = {
+  start: () => {
+    app.listen(PORT)
+    console.log(`Server running on port ${PORT}`)
+  },
+  stop: () => {
+    process.exit(0)
+  },
+}
 
-console.log(`Server running on port ${PORT}`)
+server.start()
 
-export default app
+export default server
