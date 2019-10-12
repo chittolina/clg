@@ -13,8 +13,9 @@ These instructions will get you a copy of the project up and running on your loc
 In order to correctly use the application please make sure you have these two
 working fine before we can get started:
 
-- [Node.js](https://nodejs.org/en/download/)
+- [Node.js 10+](https://nodejs.org/en/download/)
 - [Yarn](https://yarnpkg.com/lang/en/)
+- [MongoDB 4.0+](https://www.mongodb.com/download-center/community)
 
 ## Installing the dependencies
 
@@ -26,7 +27,7 @@ yarn install
 
 ### Server side
 
-In order to start a development server, run:
+In order to start a development server, run (make sure your mongodb is running):
 
 ```
 yarn dev:api
@@ -38,7 +39,7 @@ This will start the API at `http://localhost:3000`. You can open up a browser an
 
 ### Client side
 
-In order to serve the client files, run:
+In order to serve the client files, run (for now it will be only a sample):
 
 ```
 yarn dev:client
