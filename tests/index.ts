@@ -10,9 +10,13 @@ describe('Test user module', async function() {
     await User.insertMany(users)
   })
 
-  it('Should list users', async () => {
+  it('Should list users in descending order', async () => {
     const users = await user.listUsers()
-    expect(users).to.have.lengthOf(users.length)
+    const orderedUsers = users.sort(
+      (a: any, b: any) => b.lastAccessDate - a.lastAccessDate,
+    )
+
+    expect(users).to.deep.equal(orderedUsers)
   })
 
   after(async function() {
