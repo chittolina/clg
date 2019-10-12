@@ -1,4 +1,4 @@
-import stackoverflow from '../src/api/core/stackoverflow'
+import stackoverflow from '../src/api/services/stackoverflow'
 import { expect } from 'chai'
 import 'mocha'
 import server from '../src/api'

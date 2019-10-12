@@ -3,22 +3,30 @@ import * as nodeSchedule from 'node-schedule'
 import User, { IUser } from '../models/user'
 import * as R from 'ramda'
 
-type User = IUser
-
 const client = axios.create({
   baseURL: 'https://api.stackexchange.com/2.2',
   validateStatus: () => true, // Do not throw on 4xx/5xx
 })
 
 const SEARCH_LOCATION = 'Brazil'
-const MAX_REQS_PS = 10
+const MAX_REQS_PS = 25
+let allowedToRequest = true
 let currentPage = 1
 
-nodeSchedule.scheduleJob('*/1 * * * * *', async () => {
+if (process.env.NODE_ENV !== 'test') {
+  nodeSchedule.scheduleJob('*/1 * * * * *', userSearchJob)
+}
+
+async function userSearchJob() {
+  if (!allowedToRequest) return
+
+  // Wait until all these API calls return something before we poll it again
+  allowedToRequest = false
+
   const users = R.flatten(
     await Promise.all(
       [...Array(MAX_REQS_PS)].map(() =>
-        listUsersByPage({ page: currentPage, location: SEARCH_LOCATION }),
+        listUsers({ page: currentPage, location: SEARCH_LOCATION }),
       ),
     ),
   )
@@ -27,14 +35,15 @@ nodeSchedule.scheduleJob('*/1 * * * * *', async () => {
     await User.insertMany(users)
   }
 
+  allowedToRequest = true
   currentPage += 1
-})
+}
 
-async function listUsersByPage({
+async function listUsers({
   page = 1,
   pageSize = 100,
   location = '',
-} = {}): Promise<User[]> {
+} = {}): Promise<IUser[]> {
   let { data, status } = await client.get(
     `/users?page=${page}&pagesize=${pageSize}&site=stackoverflow`,
   )
@@ -61,9 +70,5 @@ async function listUsersByPage({
 }
 
 export default {
-  listUsers: async (): Promise<User[]> => {
-    let users = await User.find({})
-
-    return users
-  },
+  listUsers,
 }
