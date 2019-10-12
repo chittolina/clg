@@ -1,0 +1,50 @@
+{
+  "name": "fsts",
+  "version": "1.0.0",
+  "description": "Full Stack TypeScript",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "lint:api": "tsc --noEmit --p src/api && eslint src/api/**/*.ts --fix",
+    "lint:client": "tsc --noEmit --p src/client --jsx react && eslint src/client/**/*.tsx --fix",
+    "build:api": "tsc --p src/api --outDir dist/api",
+    "build:client": "rm -rf dist/client && parcel build src/client/index.html -d dist/client",
+    "start:api": "node dist/api/index.js",
+    "dev:api": "yarn build:api && yarn start:api",
+    "dev:client": "parcel src/client/index.html -d dist/client",
+    "test": "mocha -r ts-node/register tests/*.ts",
+    "build": "yarn build:api && yarn build:client",
+    "start": "yarn start:api"
+  },
+  "dependencies": {
+    "koa": "^2.8.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "path": "^0.12.7",
+    "react": "^16.0.0",
+    "react-dom": "^16.10.2"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.3",
+    "@types/koa": "^2.0.50",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-router": "^7.0.42",
+    "@types/koa-static": "^4.0.1",
+    "@types/mocha": "^5.2.7",
+    "@types/react": "^16.9.5",
+    "@types/react-dom": "^16.9.1",
+    "@typescript-eslint/eslint-plugin": "^2.3.3",
+    "@typescript-eslint/parser": "^2.3.3",
+    "chai": "^4.2.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.16.0",
+    "mocha": "^6.2.1",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^1.18.2",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.4"
+  }
+}
