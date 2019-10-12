@@ -9,6 +9,8 @@ const FILTERS = {
 
 export default {
   listUsers: async (): Promise<User[]> => {
+    // Note that there's no need to filter by location here as
+    // we check it before inserting on the database
     const users = await User.find({}, null, {
       sort: { lastAccessDate: FILTERS.desc },
     })
