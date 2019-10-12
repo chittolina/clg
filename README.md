@@ -1,6 +1,8 @@
-# fsts - A Full Stack Type Script Project Sample
+# clg - Stack Overflow Brazilian Users Listing
 
-This is a sample project created to be used as base for full stack TypeScript projects.
+This project consists in a Stack Overflow Brazilian Users listing, ordered by last access date. It was setup using [@chittolina/fsts](https://github.com/chittolina/fsts) boilerplate.
+
+You can find the current development state following this README, on the **Roadmap** section.
 
 ## Getting Started
 
@@ -30,10 +32,9 @@ In order to start a development server, run:
 yarn dev:api
 ```
 
-This will start the API at `http://localhost:3000`. You can open up a browser and try the following URLs to see the API working:
+This will start the API at `http://localhost:3000`. You can open up a browser and try the following URL to see the API working:
 
-- `http://localhost:3000/music`
-- `http://localhost:3000/event`
+- `http://localhost:3000/users`
 
 ### Client side
 
@@ -70,11 +71,10 @@ yarn test
 
 ## Roadmap
 
-- [x] Add server side TypeScript support
-- [x] Add client side TypeScript support
-- [x] Add server side tests
-- [ ] Add client side tests
-- [ ] Add eslint on precommit
+- [x] Create API StackOverflow service
+- [x] Create API User resources
+- [x] Create API initial tests
+- [ ] Add Client part of the project
 
 ## License
 
