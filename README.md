@@ -77,6 +77,8 @@ yarn test
 - [x] Create API initial tests
 - [ ] Add Client part of the project
 - [ ] Add Client initial tests
+- [ ] Create rate limiter tests StackOverflow service
+- [ ] Use jsdoc or something similar to generate docs
 
 ## License
 
