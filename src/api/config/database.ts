@@ -1,14 +1,11 @@
-import * as sqlite3 from 'sqlite3'
+import * as mongoose from 'mongoose'
 
-const db = new sqlite3.Database(':memory:')
+const DB_URI = 'mongodb://localhost:27017/stackoverflow'
 
 const obj = {
-  client: db,
-  start: (done: Function) => {
-    db.serialize(() => {
-      db.run('create table users (name text)')
-      done()
-    })
+  start: (onError: Function) => {
+    mongoose.connect(DB_URI)
+    mongoose.connection.on('error', err => onError(err))
   },
 }
 
