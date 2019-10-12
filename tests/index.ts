@@ -1,16 +1,14 @@
-import music from '../src/api/core/music'
-import event from '../src/api/core/event'
+import stackoverflow from '../src/api/core/stackoverflow'
 import { expect } from 'chai'
+
 import 'mocha'
 
-describe('First test suite', () => {
-  it('Should list all available musics', () => {
-    const musics = music.listMusics()
-    expect(musics).to.have.lengthOf(2)
-  })
+describe('Test stackoverflow module', () => {
+  it('Should list users', async () => {
+    const page = 1
+    const pageSize = 10
+    const users = await stackoverflow.listUsers({ page, pageSize })
 
-  it('Should list all available events', () => {
-    const events = event.listEvents()
-    expect(events).to.have.lengthOf(2)
+    expect(users).to.have.lengthOf(pageSize)
   })
 })
