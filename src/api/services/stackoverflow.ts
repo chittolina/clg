@@ -44,7 +44,7 @@ async function listUsers({
   pageSize = 100,
   location = '',
 } = {}): Promise<IUser[]> {
-  let { data, status } = await client.get(
+  const { data, status } = await client.get(
     `/users?page=${page}&pagesize=${pageSize}&site=stackoverflow`,
   )
 
