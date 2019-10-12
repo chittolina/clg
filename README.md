@@ -34,7 +34,7 @@ yarn dev:api
 
 This will start the API at `http://localhost:3000`. You can open up a browser and try the following URL to see the API working:
 
-- `http://localhost:3000/users`
+- `http://localhost:3000/user`
 
 ### Client side
 
