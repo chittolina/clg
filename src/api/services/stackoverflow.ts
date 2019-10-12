@@ -11,7 +11,7 @@ const client = axios.create({
 const SEARCH_LOCATION = 'Brazil'
 const MAX_REQS_PS = 25
 let allowedToRequest = true
-let currentPage = 1
+let currentPage = 0
 
 if (process.env.NODE_ENV !== 'test') {
   nodeSchedule.scheduleJob('*/1 * * * * *', userSearchJob)
@@ -26,7 +26,7 @@ async function userSearchJob() {
   const users = R.flatten(
     await Promise.all(
       [...Array(MAX_REQS_PS)].map(() =>
-        listUsers({ page: currentPage, location: SEARCH_LOCATION }),
+        listUsers({ page: ++currentPage, location: SEARCH_LOCATION }),
       ),
     ),
   )
@@ -36,7 +36,6 @@ async function userSearchJob() {
   }
 
   allowedToRequest = true
-  currentPage += 1
 }
 
 async function listUsers({
