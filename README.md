@@ -39,7 +39,7 @@ This will start the API at `http://localhost:3000`. You can open up a browser an
 
 ### Client side
 
-In order to serve the client files, run (for now it will be only a sample):
+In order to serve the client files, run:
 
 ```
 yarn dev:client
