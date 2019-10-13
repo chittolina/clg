@@ -1,10 +1,18 @@
 import * as mongoose from 'mongoose'
 
-const DB_URI = 'mongodb://localhost:27017/stackoverflow'
+const DB_URI = process.env.DB_URI
 
 const database = {
   start: (onError: Function) => {
-    mongoose.connect(DB_URI)
+    if (!DB_URI) {
+      throw 'DB_URI was not provided'
+    }
+
+    mongoose.connect(DB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+
     mongoose.connection.on('error', err => onError(err))
   },
 }
