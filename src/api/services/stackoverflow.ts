@@ -91,8 +91,8 @@ async function listUsers({
       (user: any) =>
         user.location &&
         user.location.match(location) &&
-        user.displayName &&
-        user.lastAccessDate,
+        user.display_name &&
+        user.last_access_date,
     )
     .map((user: any) => ({
       displayName: user.display_name,
