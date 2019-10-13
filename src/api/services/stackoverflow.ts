@@ -67,7 +67,7 @@ async function searchUsers() {
   )
 
   if (users.length > 0) {
-    await User.insertMany(users)
+    await User.insertMany(users, { ordered: false })
   }
 
   hasPendingRequests = false
