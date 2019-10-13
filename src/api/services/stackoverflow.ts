@@ -67,7 +67,11 @@ async function searchUsers() {
   )
 
   if (users.length > 0) {
-    await User.insertMany(users, { ordered: false })
+    try {
+      await User.insertMany(users, { ordered: false })
+    } catch (err) {
+      console.log('Could not insert some users')
+    }
   }
 
   hasPendingRequests = false
