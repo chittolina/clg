@@ -91,7 +91,7 @@ export default {
 
   start: () => {
     if (process.env.NODE_ENV !== 'test') {
-      searchJob = nodeSchedule.scheduleJob('*/10 * * * * *', searchUsers)
+      searchJob = nodeSchedule.scheduleJob('*/1 * * * * *', searchUsers)
     }
   },
 
