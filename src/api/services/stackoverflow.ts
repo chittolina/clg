@@ -89,12 +89,14 @@ async function listUsers({
   const users = data.items
     .filter(
       (user: any) =>
+        user.user_id &&
         user.location &&
         user.location.match(location) &&
         user.display_name &&
         user.last_access_date,
     )
     .map((user: any) => ({
+      userId: user.user_id,
       displayName: user.display_name,
       lastAccessDate: new Date(user.last_access_date),
       location: user.location,
