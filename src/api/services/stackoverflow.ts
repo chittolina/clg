@@ -9,6 +9,7 @@ const MAX_REQS_PS = process.env.MAX_REQS_PS || 25
 let searchJob: Job | null
 let hasPendingRequests = false
 let allowedToRequest = true
+let remainingQuota = Number.MAX_SAFE_INTEGER
 let currentPage = 0
 
 const client = axios.create({
@@ -23,6 +24,10 @@ async function checkBackoffTime(
 ): Promise<AxiosResponse> {
   const { data } = response
 
+  if (data && data.quota_remaining) {
+    remainingQuota = data.quota_remaining
+  }
+
   if (data && data.backoff) {
     allowedToRequest = false
 
@@ -35,7 +40,13 @@ async function checkBackoffTime(
 }
 
 async function searchUsers() {
-  if (hasPendingRequests || !allowedToRequest) return
+  if (hasPendingRequests || !allowedToRequest) {
+    return
+  }
+
+  if (MAX_REQS_PS > remainingQuota) {
+    return
+  }
 
   // Wait until all these API calls return something before we poll it again
   hasPendingRequests = true
