@@ -5,7 +5,7 @@ import User, { IUser } from '../models/user'
 import * as R from 'ramda'
 
 const SEARCH_LOCATION = 'Brazil'
-const MAX_REQS_PS = 25
+const MAX_REQS_PS = process.env.MAX_REQS_PS || 25
 let searchJob: Job | null
 let hasPendingRequests = false
 let allowedToRequest = true
