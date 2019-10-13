@@ -27,7 +27,7 @@ async function checkBackoffTime(
     allowedToRequest = false
 
     const now = Date.now()
-    const refreshDate = new Date(now + data.backoff / 1000).getTime()
+    const refreshDate = new Date(now + data.backoff * 1000).getTime()
 
     setTimeout(() => (allowedToRequest = true), refreshDate - now)
 
