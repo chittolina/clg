@@ -1,7 +1,5 @@
 import * as React from 'react'
 import { render } from 'react-dom'
+import Main from './components/Main'
 
-render(
-  <h1>Parcel and TypeScript are awesome!</h1>,
-  document.getElementById('main'),
-)
+render(<Main />, document.getElementById('main'))
