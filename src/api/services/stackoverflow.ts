@@ -83,6 +83,7 @@ async function listUsers({
       displayName: user.display_name,
       lastAccessDate: user.last_access_date,
       location: user.location,
+      profileImage: user.profile_image,
     }))
 
   return users
