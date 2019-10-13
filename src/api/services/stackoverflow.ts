@@ -96,7 +96,7 @@ async function listUsers({
     )
     .map((user: any) => ({
       displayName: user.display_name,
-      lastAccessDate: user.last_access_date,
+      lastAccessDate: new Date(user.last_access_date),
       location: user.location,
       profileImage: user.profile_image,
     }))
