@@ -1,23 +1,23 @@
 import axios, { AxiosResponse } from 'axios'
 import * as nodeSchedule from 'node-schedule'
+import { Job } from 'node-schedule'
 import User, { IUser } from '../models/user'
 import * as R from 'ramda'
 
+const SEARCH_LOCATION = 'Brazil'
+const MAX_REQS_PS = 25
+let searchJob: Job | null
 let hasPendingRequests = false
 let allowedToRequest = true
+let currentPage = 0
+
 const client = axios.create({
   baseURL: 'https://api.stackexchange.com/2.2',
   validateStatus: () => true, // Do not throw on 4xx/5xx
 })
 
-const SEARCH_LOCATION = 'Brazil'
-const MAX_REQS_PS = 25
-let allowedToRequest = true
-let currentPage = 0
 client.interceptors.response.use(checkBackoffTime)
 
-if (process.env.NODE_ENV !== 'test') {
-  nodeSchedule.scheduleJob('*/1 * * * * *', userSearchJob)
 async function checkBackoffTime(
   response: AxiosResponse,
 ): Promise<AxiosResponse> {
@@ -91,4 +91,16 @@ async function listUsers({
 
 export default {
   listUsers,
+
+  start: () => {
+    if (process.env.NODE_ENV !== 'test') {
+      searchJob = nodeSchedule.scheduleJob('*/10 * * * * *', searchUsers)
+    }
+  },
+
+  stop: () => {
+    if (searchJob) {
+      searchJob.cancel()
+    }
+  },
 }
