@@ -24,6 +24,13 @@ async function checkBackoffTime(
 ): Promise<AxiosResponse> {
   const { data } = response
 
+  if (data && data.error_id == 502) {
+    allowedToRequest = false
+    // TODO: Come out with a better solution here
+    // Try again in 24 hours
+    setTimeout(() => (allowedToRequest = true), 24 * 60 * 60 * 1000)
+  }
+
   if (data && data.quota_remaining) {
     remainingQuota = data.quota_remaining
   }
