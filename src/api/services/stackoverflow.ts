@@ -37,8 +37,7 @@ async function checkBackoffTime(
   return response
 }
 
-async function userSearchJob() {
-  if (!allowedToRequest) return
+async function searchUsers() {
   if (hasPendingRequests || !allowedToRequest) return
 
   // Wait until all these API calls return something before we poll it again
