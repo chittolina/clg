@@ -1,8 +1,10 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import * as nodeSchedule from 'node-schedule'
 import User, { IUser } from '../models/user'
 import * as R from 'ramda'
 
+let hasPendingRequests = false
+let allowedToRequest = true
 const client = axios.create({
   baseURL: 'https://api.stackexchange.com/2.2',
   validateStatus: () => true, // Do not throw on 4xx/5xx
@@ -12,16 +14,35 @@ const SEARCH_LOCATION = 'Brazil'
 const MAX_REQS_PS = 25
 let allowedToRequest = true
 let currentPage = 0
+client.interceptors.response.use(checkBackoffTime)
 
 if (process.env.NODE_ENV !== 'test') {
   nodeSchedule.scheduleJob('*/1 * * * * *', userSearchJob)
+async function checkBackoffTime(
+  response: AxiosResponse,
+): Promise<AxiosResponse> {
+  const { data } = response
+
+  if (data && data.backoff) {
+    allowedToRequest = false
+
+    const now = Date.now()
+    const refreshDate = new Date(now + data.backoff / 1000).getTime()
+
+    setTimeout(() => (allowedToRequest = true), refreshDate - now)
+
+    return Promise.reject()
+  }
+
+  return response
 }
 
 async function userSearchJob() {
   if (!allowedToRequest) return
+  if (hasPendingRequests || !allowedToRequest) return
 
   // Wait until all these API calls return something before we poll it again
-  allowedToRequest = false
+  hasPendingRequests = true
 
   const users = R.flatten(
     await Promise.all(
@@ -35,7 +56,7 @@ async function userSearchJob() {
     await User.insertMany(users)
   }
 
-  allowedToRequest = true
+  hasPendingRequests = false
 }
 
 async function listUsers({
