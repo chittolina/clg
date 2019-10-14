@@ -17,7 +17,21 @@ export const client = axios.create({
   validateStatus: () => true, // Do not throw on 4xx/5xx
 })
 
+client.interceptors.response.use(checkFinishedSearch)
 client.interceptors.response.use(checkBackoffTime)
+
+async function checkFinishedSearch(
+  response: AxiosResponse,
+): Promise<AxiosResponse> {
+  const { data } = response
+
+  // If we finished the users pagination, go back to first page to sync the users data
+  if (data && !data.has_more) {
+    currentPage = 0
+  }
+
+  return response
+}
 
 async function checkBackoffTime(
   response: AxiosResponse,
