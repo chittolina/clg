@@ -15,6 +15,10 @@ const database = {
 
     mongoose.connection.on('error', err => onError(err))
   },
+
+  stop: () => {
+    mongoose.connection.close()
+  },
 }
 
 export default database
