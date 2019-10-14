@@ -82,15 +82,21 @@ async function listUsers({
   pageSize = 100,
   location = '',
 } = {}): Promise<IUser[]> {
-  const { data, status } = await client.get(
-    `/users?page=${page}&pagesize=${pageSize}&site=stackoverflow`,
-  )
+  let response
 
-  if (!data || status !== 200) {
+  try {
+    response = await client.get(
+      `/users?page=${page}&pagesize=${pageSize}&site=stackoverflow`,
+    )
+  } catch (err) {
+    console.error('An error occurred while listing users on StackOverflow API')
+  }
+
+  if (!response || !response.data || response.status !== 200) {
     return []
   }
 
-  const users = data.items
+  const users = response.data.items
     .filter(
       (user: any) =>
         user.user_id &&
