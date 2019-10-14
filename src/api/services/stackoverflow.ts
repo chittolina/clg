@@ -22,9 +22,9 @@ client.interceptors.response.use(checkBackoffTime)
 async function checkBackoffTime(
   response: AxiosResponse,
 ): Promise<AxiosResponse> {
-  const { data } = response
+  const { data, status } = response
 
-  if (data && data.error_id == 502) {
+  if ((data && data.error_id == 502) || status == 503) {
     allowedToRequest = false
     // TODO: Come out with a better solution here
     // Try again in 24 hours
