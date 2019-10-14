@@ -5,8 +5,10 @@ import User, { IUser } from '../models/user'
 import * as R from 'ramda'
 
 const SEARCH_LOCATION = 'Brazil'
-const MAX_REQS_PS = process.env.MAX_REQS_PS || 25
-let searchJob: Job | null
+const MAX_REQS_PS = process.env.MAX_REQS_PS
+  ? parseInt(process.env.MAX_REQS_PS)
+  : 25
+let syncJob: Job | null
 let hasPendingRequests = false
 let allowedToRequest = true
 let remainingQuota = Number.MAX_SAFE_INTEGER
