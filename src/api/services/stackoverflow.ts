@@ -61,7 +61,7 @@ async function checkBackoffTime(
   return response
 }
 
-async function searchUsers() {
+async function syncUsers() {
   if (hasPendingRequests || !allowedToRequest) {
     return
   }
@@ -82,10 +82,29 @@ async function searchUsers() {
   )
 
   if (users.length > 0) {
+    const knownUsers = await User.find({
+      userId: { $in: users.map(user => user.userId) },
+    })
+    const unknownUsers = users.filter(
+      user => !knownUsers.find(knownUser => knownUser.userId == user.userId),
+    )
+
+    // Update the data for the users we already have stored
+    await Promise.all(
+      knownUsers.map(knownUser => {
+        const newUserData = users.find(user => user.userId == knownUser.userId)
+
+        User.update({ userId: knownUser.userId }, newUserData)
+      }),
+    )
+
+    // Insert the users we don't have yet
     try {
-      await User.insertMany(users, { ordered: false })
+      await User.insertMany(unknownUsers, {
+        ordered: false,
+      })
     } catch (err) {
-      console.log('Could not insert some users')
+      console.error('Could not insert some users')
     }
   }
 
@@ -135,12 +154,12 @@ export default {
   listUsers,
 
   start: () => {
-    searchJob = nodeSchedule.scheduleJob('*/1 * * * * *', searchUsers)
+    syncJob = nodeSchedule.scheduleJob('*/1 * * * * *', syncUsers)
   },
 
   stop: () => {
-    if (searchJob) {
-      searchJob.cancel()
+    if (syncJob) {
+      syncJob.cancel()
     }
   },
 }
