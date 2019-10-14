@@ -40,9 +40,8 @@ async function checkBackoffTime(
 
   if ((data && data.error_id == 502) || status == 503) {
     allowedToRequest = false
-    // TODO: Come out with a better solution here
-    // Try again in 24 hours
-    setTimeout(() => (allowedToRequest = true), 24 * 60 * 60 * 1000)
+    // Try again in 30 seconds
+    setTimeout(() => (allowedToRequest = true), 30 * 1000)
   }
 
   if (data && data.quota_remaining) {
