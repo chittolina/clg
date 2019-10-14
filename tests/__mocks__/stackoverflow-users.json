@@ -1,0 +1,30 @@
+[
+  {
+    "user_id": 1,
+    "display_name": "John Doe",
+    "last_access_date": 1570907847731,
+    "location": "United Kingdom",
+    "profile_image": "https://example.com"
+  },
+  {
+    "user_id": 1,
+    "display_name": "Kelly Doe",
+    "last_access_date": 1570907847731,
+    "location": "France",
+    "profile_image": "https://example.com"
+  },
+  {
+    "user_id": 1,
+    "display_name": "Marcus Doe",
+    "last_access_date": 1570907847731,
+    "location": "Brazil",
+    "profile_image": "https://example.com"
+  },
+  {
+    "user_id": 1,
+    "display_name": "Kelsey Doe",
+    "last_access_date": 1570907847731,
+    "location": "Rio de Janeiro, Brazil",
+    "profile_image": "https://example.com"
+  }
+]

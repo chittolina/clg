@@ -12,7 +12,7 @@ let allowedToRequest = true
 let remainingQuota = Number.MAX_SAFE_INTEGER
 let currentPage = 0
 
-const client = axios.create({
+export const client = axios.create({
   baseURL: 'https://api.stackexchange.com/2.2',
   validateStatus: () => true, // Do not throw on 4xx/5xx
 })
