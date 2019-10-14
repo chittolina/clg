@@ -102,7 +102,7 @@ async function listUsers({
     .map((user: any) => ({
       userId: user.user_id,
       displayName: user.display_name,
-      lastAccessDate: new Date(user.last_access_date),
+      lastAccessDate: user.last_access_date,
       location: user.location,
       profileImage: user.profile_image,
     }))
@@ -114,9 +114,7 @@ export default {
   listUsers,
 
   start: () => {
-    if (process.env.NODE_ENV !== 'test') {
-      searchJob = nodeSchedule.scheduleJob('*/1 * * * * *', searchUsers)
-    }
+    searchJob = nodeSchedule.scheduleJob('*/1 * * * * *', searchUsers)
   },
 
   stop: () => {
