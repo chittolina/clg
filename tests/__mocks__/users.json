@@ -1,20 +1,24 @@
 [
   {
+    "userId": 1,
     "displayName": "John Doe",
     "lastAccessDate": 1570907847731,
     "location": "Brazil"
   },
   {
+    "userId": 2,
     "displayName": "Jane Doe",
     "lastAccessDate": 1570907847732,
     "location": "Brazil"
   },
   {
+    "userId": 3,
     "displayName": "Mary Doe",
     "lastAccessDate": 1570907847733,
     "location": "Brazil"
   },
   {
+    "userId": 4,
     "displayName": "Kelly Doe",
     "lastAccessDate": 1570907847734,
     "location": "Brazil"
