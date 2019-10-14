@@ -1,9 +1,7 @@
 import * as Koa from 'koa'
 import loader from './loaders'
 import database from './config/database'
-import stackoverflow from './services/stackoverflow'
-
-database.start(() => console.log('Database connection has crashed!'))
+import stackoverflowService from './services/stackoverflow'
 
 const app = new Koa()
 
@@ -12,16 +10,27 @@ loader(app)
 const PORT = process.env.PORT || 3000
 
 const server = {
-  start: () => {
-    stackoverflow.start()
+  start: async () => {
+    await database.start(() => console.log('Database connection has crashed!'))
+
+    if (process.env.NODE_ENV !== 'test') {
+      stackoverflowService.start()
+    }
+
     app.listen(PORT)
-    console.log(`Server running on port ${PORT}`)
   },
+
   stop: () => {
+    database.stop()
     process.exit(0)
   },
 }
 
-server.start()
+async function start() {
+  await server.start()
+  console.log(`Server running on port ${PORT}`)
+}
+
+start()
 
 export default server
