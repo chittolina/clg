@@ -1,6 +1,6 @@
 # clg - Stack Overflow Brazilian Users Listing
 
-This project consists in a Stack Overflow Brazilian Users listing, ordered by last access date. It was setup using [@chittolina/fsts](https://github.com/chittolina/fsts) boilerplate (which was created yesterday to try a little of TypeScript).
+This project consists in a Stack Overflow Brazilian Users listing, ordered by last access date. It was setup using [@chittolina/fsts](https://github.com/chittolina/fsts) boilerplate.
 
 You can check the current master (WIP) version here: https://fstsclg.herokuapp.com/
 
@@ -74,12 +74,11 @@ yarn test
 
 ## Roadmap
 
-- [x] Create API StackOverflow service
-- [x] Create API User listing
-- [x] Create API initial tests
-- [ ] Add Client part of the project
-- [ ] Add Client initial tests
-- [ ] Create rate limiter tests StackOverflow service
+- [x] Create StackOverflow service
+- [x] List users by last access date in descending order
+- [x] Store only brazilian users on database
+- [ ] Create throttling tests for StackOverflow service
+- [ ] Add pagination to users listing
 - [ ] Use jsdoc or something similar to generate docs
 
 ## License
