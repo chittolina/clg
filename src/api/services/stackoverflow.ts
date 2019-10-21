@@ -67,11 +67,14 @@ async function checkBackoffTime(
     backoffTime = 30 * 1000
   }
 
-  if (data.quota_remaining && remainingQuota < queue.rate.max) {
-    hasToBackoff = true
-    allowedToRequest = false
-    backoffTime = 30 * 1000
+  if (data.quota_remaining) {
     remainingQuota = data.quota_remaining
+
+    if (remainingQuota < queue.rate.max) {
+      hasToBackoff = true
+      allowedToRequest = false
+      backoffTime = 30 * 1000
+    }
   }
 
   if (hasToBackoff) {
