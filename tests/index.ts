@@ -1,56 +1,32 @@
-import user from '../src/api/core/user'
-import { expect } from 'chai'
-import 'mocha'
+import 'ts-mocha'
+import * as path from 'path'
+import * as fs from 'fs'
 import server from '../src/api'
-import stackoverflow, { client } from '../src/api/services/stackoverflow'
-import * as stackoverflowUsers from './__mocks__/stackoverflow-users.json'
-import MockAdapter from 'axios-mock-adapter'
-import * as users from './__mocks__/users.json'
-import User from '../src/api/models/user'
+const Mocha = require('mocha')
+const mocha = new Mocha()
+const TEST_DIR = 'tests'
 
-describe('Test user module', async function() {
-  const mock = new MockAdapter(client)
+async function runTests() {
+  await server.start()
 
-  before(async function() {
-    await User.insertMany(users)
-  })
-
-  it('Should list users in descending order', async () => {
-    const users = await user.listUsers()
-    const orderedUsers = users.sort(
-      (a: any, b: any) => b.lastAccessDate - a.lastAccessDate,
+  // Add each .js file to the mocha instance
+  fs.readdirSync(TEST_DIR)
+    .filter(
+      file =>
+        file.substr(-3) === '.ts' &&
+        !file.startsWith(path.basename(__filename)),
     )
-
-    expect(users).to.deep.equal(orderedUsers)
-  })
-
-  it('Should filter brazilian users only', async () => {
-    const searchLocation = 'Brazil'
-
-    mock
-      .onGet('/users?page=1&pagesize=100&site=stackoverflow')
-      .reply(200, { items: stackoverflowUsers })
-
-    const brazilianUsers = stackoverflowUsers
-      .filter(user => user.location.match(searchLocation))
-      .map(user => ({
-        userId: user.user_id,
-        displayName: user.display_name,
-        location: user.location,
-        lastAccessDate: user.last_access_date,
-        profileImage: user.profile_image,
-      }))
-
-    const foundUsers = await stackoverflow.listUsers({
-      page: 1,
-      pageSize: 100,
-      location: searchLocation,
+    .forEach(file => {
+      mocha.addFile(path.join(TEST_DIR, file))
     })
 
-    expect(foundUsers).to.deep.equal(brazilianUsers)
+  const failures = await new Promise(resolve => {
+    mocha.run((failures: any) => {
+      resolve(failures)
+    })
   })
-  after(async function() {
-    await User.deleteMany({})
-    server.stop()
-  })
-})
+
+  process.exit(failures ? 1 : 0)
+}
+
+runTests()

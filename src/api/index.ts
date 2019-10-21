@@ -31,6 +31,8 @@ async function start() {
   console.log(`Server running on port ${PORT}`)
 }
 
-start()
+if (process.env.NODE_ENV !== 'test') {
+  start()
+}
 
 export default server

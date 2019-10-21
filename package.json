@@ -12,7 +12,7 @@
     "start:api": "node dist/api/index.js",
     "dev:api": "yarn build:api && yarn start:api",
     "dev:client": "parcel src/client/index.html -d dist/client",
-    "test": "mocha -r ts-node/register tests/*.ts",
+    "test": "NODE_ENV=test ts-node tests/index.ts",
     "build": "yarn build:api && yarn build:client",
     "start": "yarn start:api"
   },
@@ -44,6 +44,7 @@
     "@types/ramda": "^0.26.29",
     "@types/react": "^16.9.5",
     "@types/react-dom": "^16.9.1",
+    "@types/sinon": "^7.5.0",
     "@types/sqlite3": "^3.1.5",
     "@typescript-eslint/eslint-plugin": "^2.3.3",
     "@typescript-eslint/parser": "^2.3.3",
@@ -56,6 +57,8 @@
     "mocha": "^6.2.1",
     "parcel-bundler": "^1.12.4",
     "prettier": "^1.18.2",
+    "sinon": "^7.5.0",
+    "ts-mocha": "^6.0.0",
     "ts-node": "^8.4.1",
     "typescript": "^3.6.4"
   }
