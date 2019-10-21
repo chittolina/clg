@@ -1,26 +1,34 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 import * as nodeSchedule from 'node-schedule'
 import { Job } from 'node-schedule'
 import User, { IUser } from '../models/user'
+import RateLimitedQueue from '../utils/rate-limiter'
 import * as R from 'ramda'
 
 const SEARCH_LOCATION = 'Brazil'
-const MAX_REQS_PS = process.env.MAX_REQS_PS
-  ? parseInt(process.env.MAX_REQS_PS)
+const queue = new RateLimitedQueue({ max: 5, period: 1000 })
+const INPUT_SEARCH_RATE = process.env.INPUT_SEARCH_RATE
+  ? parseInt(process.env.INPUT_SEARCH_RATE)
   : 25
 let syncJob: Job | null
-let hasPendingRequests = false
 let allowedToRequest = true
+// In production we would replace it with the last remaining quota received by StackExchange API
 let remainingQuota = Number.MAX_SAFE_INTEGER
 let currentPage = 0
 
 export const client = axios.create({
   baseURL: 'https://api.stackexchange.com/2.2',
-  validateStatus: () => true, // Do not throw on 4xx/5xx
+  validateStatus: () => true, // Do not throw on 4xx/5xx,
+  timeout: 2000,
 })
 
 client.interceptors.response.use(checkFinishedSearch)
 client.interceptors.response.use(checkBackoffTime)
+client.interceptors.request.use((config: AxiosRequestConfig) => {
+  return new Promise(resolve => {
+    queue.add({ callback: resolve, data: config })
+  })
+})
 
 async function checkFinishedSearch(
   response: AxiosResponse,
@@ -40,42 +48,59 @@ async function checkBackoffTime(
 ): Promise<AxiosResponse> {
   const { data, status } = response
 
-  if ((data && data.error_id == 502) || status == 503) {
-    allowedToRequest = false
-    // Try again in 30 seconds
-    setTimeout(() => (allowedToRequest = true), 30 * 1000)
+  if (!data) {
+    return response
   }
 
-  if (data && data.quota_remaining) {
+  let hasToBackoff = false
+  let backoffTime = 0
+
+  if (data.backoff) {
+    hasToBackoff = true
+    allowedToRequest = false
+    backoffTime = data.backoff
+  }
+
+  if (data.error_id == 502 || status == 503) {
+    hasToBackoff = true
+    allowedToRequest = false
+    backoffTime = 30 * 1000
+  }
+
+  if (data.quota_remaining && remainingQuota < queue.rate.max) {
+    hasToBackoff = true
+    allowedToRequest = false
+    backoffTime = 30 * 1000
     remainingQuota = data.quota_remaining
   }
 
-  if (data && data.backoff) {
-    allowedToRequest = false
+  if (hasToBackoff) {
+    queue.freeze()
 
-    setTimeout(() => (allowedToRequest = true), data.backoff * 1000)
-
-    return Promise.reject()
+    setTimeout(() => {
+      allowedToRequest = true
+      queue.unfreeze()
+      queue.setRemainingSlots(remainingQuota)
+    }, backoffTime)
+  } else {
+    queue.releaseSlot()
   }
 
   return response
 }
 
 async function syncUsers() {
-  if (hasPendingRequests || !allowedToRequest) {
+  if (!allowedToRequest) {
     return
   }
 
-  if (MAX_REQS_PS > remainingQuota) {
+  if (INPUT_SEARCH_RATE > remainingQuota) {
     return
   }
-
-  // Wait until all these API calls return something before we poll it again
-  hasPendingRequests = true
 
   const users = R.flatten(
     await Promise.all(
-      [...Array(MAX_REQS_PS)].map(() =>
+      [...Array(INPUT_SEARCH_RATE)].map(() =>
         listUsers({ page: ++currentPage, location: SEARCH_LOCATION }),
       ),
     ),
@@ -107,8 +132,6 @@ async function syncUsers() {
       console.error('Could not insert some users')
     }
   }
-
-  hasPendingRequests = false
 }
 
 async function listUsers({
@@ -154,7 +177,7 @@ export default {
   listUsers,
 
   start: () => {
-    syncJob = nodeSchedule.scheduleJob('*/1 * * * * *', syncUsers)
+    syncJob = nodeSchedule.scheduleJob('* */2 * * * *', syncUsers)
   },
 
   stop: () => {
