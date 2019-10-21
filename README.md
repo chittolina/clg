@@ -77,9 +77,10 @@ yarn test
 - [x] Create StackOverflow service
 - [x] List users by last access date in descending order
 - [x] Store only brazilian users on database
-- [ ] Create throttling tests for StackOverflow service
+- [x] Create tests for the Rate Limiter module
+- [x] Use typedoc to generate docs on API
+- [ ] Use typedoc to generate docs on Client
 - [ ] Add pagination to users listing
-- [ ] Use jsdoc or something similar to generate docs
 
 ## License
 
